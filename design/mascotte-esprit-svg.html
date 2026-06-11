@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MoveBreak — Mascotte « Esprit » redessinée en SVG (preuve)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#DCEAF1;color:#1F2937;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+.card{box-shadow:0 10px 25px -10px rgba(70,110,160,.35),0 4px 8px -4px rgba(0,0,0,.06);}
+.chip{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;}
+.breathe{animation:breathe 4s ease-in-out infinite;transform-origin:center;}
+@keyframes breathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.02)}}
+.spin{animation:spin 14s linear infinite;transform-origin:center;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.9}50%{opacity:.5}}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-4xl mx-auto px-5 py-8">
+
+  <header class="mb-6">
+    <div class="chip text-sky-700">Dev/UX · preuve de faisabilité (SVG original)</div>
+    <h1 class="text-2xl font-extrabold leading-tight">Mascotte « Esprit » — redessinée en vecteur, à nous</h1>
+    <div class="text-xs text-slate-500 mt-1">Inspiré de ton concept (Éveil → Harmonie), mais 100 % SVG original : scalable, animable, sans watermark, sans souci de licence.</div>
+  </header>
+
+  <div class="grid sm:grid-cols-2 gap-5 mb-6">
+
+    <!-- STADE 1 : L'Éveil -->
+    <div class="bg-white/70 backdrop-blur rounded-3xl p-5 card text-center">
+      <div class="chip text-sky-600 mb-1">Stade 1</div>
+      <h2 class="text-xl font-bold mb-2">L'Éveil</h2>
+      <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+        <defs>
+          <filter id="glow1" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="halo1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#CFE9FF" stop-opacity=".9"/><stop offset="100%" stop-color="#CFE9FF" stop-opacity="0"/></radialGradient>
+          <linearGradient id="body1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F6FCFF"/><stop offset="100%" stop-color="#D6ECFB"/></linearGradient>
+          <radialGradient id="core1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF7DC"/><stop offset="40%" stop-color="#FFD873"/><stop offset="100%" stop-color="#FFD873" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="100" cy="104" r="78" fill="url(#halo1)" class="pulse"/>
+        <g class="breathe">
+          <path d="M100 30 C141 30 166 60 166 100 C166 132 150 150 150 150 C150 150 140 142 132 150 C124 158 120 150 112 154 C104 158 96 158 88 154 C80 150 76 158 68 150 C60 142 50 150 50 150 C50 150 34 132 34 100 C34 60 59 30 100 30 Z" fill="url(#body1)" stroke="#ABD6F2" stroke-width="2.5"/>
+          <ellipse cx="100" cy="118" rx="40" ry="30" fill="#fff" opacity=".25"/>
+          <circle cx="100" cy="120" r="18" fill="url(#core1)" filter="url(#glow1)"/>
+          <circle cx="100" cy="120" r="5" fill="#FFF3C4"/>
+          <ellipse cx="82" cy="92" rx="7.5" ry="9.5" fill="#2B3A55"/><ellipse cx="118" cy="92" rx="7.5" ry="9.5" fill="#2B3A55"/>
+          <circle cx="84" cy="89" r="2.3" fill="#fff"/><circle cx="120" cy="89" r="2.3" fill="#fff"/>
+          <path d="M91 106 Q100 114 109 106" stroke="#2B3A55" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="70" cy="104" r="5.5" fill="#FFC6D2" opacity=".7"/><circle cx="130" cy="104" r="5.5" fill="#FFC6D2" opacity=".7"/>
+        </g>
+      </svg>
+      <p class="text-xs text-slate-500 mt-2">Niveaux 1–4 · l'esprit s'éveille (forme simple, halo doux).</p>
+    </div>
+
+    <!-- STADE 4 : L'Équilibre -->
+    <div class="bg-white/70 backdrop-blur rounded-3xl p-5 card text-center">
+      <div class="chip text-violet-600 mb-1">Stade 4</div>
+      <h2 class="text-xl font-bold mb-2">L'Équilibre</h2>
+      <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+        <defs>
+          <filter id="glow4" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="ring4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C5CFF"/><stop offset="50%" stop-color="#34D399"/><stop offset="100%" stop-color="#7C5CFF"/></linearGradient>
+          <linearGradient id="body4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F2F0FF"/><stop offset="55%" stop-color="#E2F4FF"/><stop offset="100%" stop-color="#D8FBEF"/></linearGradient>
+          <radialGradient id="core4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF7DC"/><stop offset="40%" stop-color="#FFD873"/><stop offset="100%" stop-color="#FFD873" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="100" cy="102" r="84" fill="none" stroke="url(#ring4)" stroke-width="3" stroke-dasharray="6 10" class="spin" opacity=".8" filter="url(#glow4)"/>
+        <circle cx="100" cy="102" r="72" fill="none" stroke="url(#ring4)" stroke-width="1.5" opacity=".4"/>
+        <g class="breathe">
+          <path d="M64 60 q10 -16 22 -8" stroke="#B9A6FF" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M136 60 q-10 -16 -22 -8" stroke="#B9A6FF" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M100 34 C140 34 162 64 162 104 C162 140 144 156 132 158 C120 160 116 150 108 152 C100 154 92 154 84 152 C76 150 80 160 68 158 C56 156 38 140 38 104 C38 64 60 34 100 34 Z" fill="url(#body4)" stroke="#C9BDF7" stroke-width="2.5"/>
+          <ellipse cx="100" cy="120" rx="40" ry="32" fill="#fff" opacity=".22"/>
+          <path d="M100 50 l4.5 8 9 1.5 -6.5 6.5 1.5 9 -8.5 -4.5 -8.5 4.5 1.5 -9 -6.5 -6.5 9 -1.5 z" fill="#FFE08A" stroke="#F4C752" stroke-width="1"/>
+          <circle cx="100" cy="124" r="20" fill="url(#core4)" filter="url(#glow4)"/>
+          <circle cx="100" cy="124" r="6" fill="#FFF3C4"/>
+          <ellipse cx="84" cy="98" rx="8" ry="10.5" fill="#2B3A55"/><ellipse cx="116" cy="98" rx="8" ry="10.5" fill="#2B3A55"/>
+          <circle cx="86" cy="95" r="2.6" fill="#fff"/><circle cx="118" cy="95" r="2.6" fill="#fff"/>
+          <path d="M91 114 Q100 122 109 114" stroke="#2B3A55" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="70" cy="110" r="6" fill="#FFC6D2" opacity=".7"/><circle cx="130" cy="110" r="6" fill="#FFC6D2" opacity=".7"/>
+          <path d="M60 130 q-14 8 -16 22" stroke="#C9BDF7" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M140 130 q14 8 16 22" stroke="#C9BDF7" stroke-width="8" fill="none" stroke-linecap="round"/>
+        </g>
+        <g fill="#FFE08A" class="pulse"><circle cx="40" cy="60" r="2.5"/><circle cx="160" cy="56" r="2"/><circle cx="166" cy="120" r="2.5"/><circle cx="34" cy="120" r="2"/></g>
+      </svg>
+      <p class="text-xs text-slate-500 mt-2">Niveaux élevés · aura, étoile de front, membres, scintillements.</p>
+    </div>
+  </div>
+
+  <section class="bg-white/70 backdrop-blur rounded-3xl p-5 card mb-3">
+    <div class="chip text-sky-700 mb-2">Ce que ça donne, concrètement</div>
+    <ul class="text-sm space-y-1.5 text-slate-700">
+      <li>✅ <b>SVG original</b> (à nous) → scalable à l'infini, animable (respiration, halo, rotation d'aura), <b>léger</b>, rendu identique partout.</li>
+      <li>✅ <b>Pas de watermark, pas de souci de licence/marque</b> (on ne ré-utilise pas l'image IA, on en réinterprète l'esprit).</li>
+      <li>🎮 <b>Les 5 évolutions = système de niveaux</b> : la mascotte grandit avec ta progression (Éveil → Harmonie). Forte synergie avec Stats/badges.</li>
+      <li>🔸 <b>Honnêteté</b> : le SVG est plus <i>stylisé</i> que le rendu IA (dégradés irisés très riches difficiles à 100 % en vecteur). C'est le prix de l'ownership + de la scalabilité.</li>
+    </ul>
+  </section>
+
+  <p class="text-center text-[11px] text-slate-500 mt-4">Preuve de faisabilité — aucun fichier produit modifié. On peut affiner le style, puis décliner les 5 stades + humeurs.</p>
+</div>
+</body>
+</html>

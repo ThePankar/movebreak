@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#7C5CFF" />
+<title>MoveBreak — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{--primary:#7C5CFF;--bg:#FAF7F2;--ink:#1F2937;}
+html,body{background:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);}
+/* Fond cream + vagues SVG en statique (z-index explicite, cf. DECISIONS.md) */
+.page-bg{position:fixed;inset:0;background:#FAF7F2;z-index:0;}
+.page-waves{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1;}
+#app{position:relative;z-index:10;}
+/* Animations */
+.blob-float{animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.pulse-soft{animation:pulseSoft 2.4s ease-in-out infinite;}
+@keyframes pulseSoft{0%,100%{opacity:1}50%{opacity:.6}}
+.blink{animation:blink 4.5s infinite;}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.ring-progress{transition:stroke-dashoffset 1s linear;}
+.btn-press{transition:transform .12s ease;}
+.btn-press:active{transform:translateY(2px);}
+.shadow-soft{box-shadow:0 10px 25px -10px rgba(124,92,255,.25),0 4px 8px -4px rgba(0,0,0,.06);}
+.pop{animation:pop .35s ease;}
+@keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.nav-locked::after{content:"";position:absolute;inset:auto 8px 6px auto;width:6px;height:6px;border-radius:50%;background:#D1D5DB;}
+.fade-swap{animation:fadeSwap .5s ease;}
+@keyframes fadeSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.scroll-pretty::-webkit-scrollbar{width:6px}
+.scroll-pretty::-webkit-scrollbar-thumb{background:#E5E7EB;border-radius:3px}
+.drawer-bg{animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.drawer-in{animation:slideIn .3s ease;}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.spin-slow{animation:spinSlow 16s linear infinite;}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="page-bg"></div>
+<svg class="page-waves" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pw1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C5CFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#7C5CFF" stop-opacity=".35"/>
+      <stop offset="100%" stop-color="#7C5CFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="pw2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A593FF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#A593FF" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#A593FF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="pw3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#34D399" stop-opacity=".3"/>
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M-100,180 C150,80 350,260 550,150 C750,40 900,200 1100,120" stroke="url(#pw1)" stroke-width="3" fill="none"/>
+  <path d="M-100,360 C200,300 380,460 600,360 C800,270 950,400 1100,340" stroke="url(#pw2)" stroke-width="2.5" fill="none"/>
+  <path d="M-100,560 C180,500 400,640 600,540 C800,440 950,580 1100,520" stroke="url(#pw1)" stroke-width="2" fill="none"/>
+  <path d="M-100,720 C200,660 400,780 620,700 C820,620 980,720 1100,680" stroke="url(#pw3)" stroke-width="2.5" fill="none"/>
+</svg>
+<div id="app"></div>
+<script type="text/babel">
+%APP%
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MoveBreak — Proposition d'identité visuelle</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#7C5CFF;--bg:#FAF7F2;--ink:#1F2937;--mint:#34D399;--orange:#FB923C;--red:#F87171;}
+body{background:#FAF7F2;color:#1F2937;font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+.card{box-shadow:0 10px 25px -10px rgba(124,92,255,.25),0 4px 8px -4px rgba(0,0,0,.06);}
+.chip{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;}
+.ico{width:28px;height:28px;stroke:#7C5CFF;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.display{font-family:'Baloo 2',cursive;}
+</style>
+</head>
+<body class="min-h-screen">
+<div class="max-w-5xl mx-auto px-5 py-8">
+
+  <header class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-2xl bg-violet-500 text-white grid place-items-center text-2xl font-extrabold card display">M</div>
+    <div>
+      <div class="chip text-violet-500">UX/UI · Proposition d'identité visuelle</div>
+      <h1 class="text-2xl font-extrabold leading-tight">MoveBreak — une entité visuelle qui nous appartient</h1>
+      <div class="text-xs text-gray-500 mt-0.5">Objectif : du rendu identique sur iOS/Android/Windows, et une marque reconnaissable. À valider avant implémentation.</div>
+    </div>
+  </header>
+
+  <!-- Mise au point -->
+  <section class="bg-white rounded-3xl p-5 card mb-5">
+    <div class="chip text-violet-500 mb-2">Le constat (franc)</div>
+    <div class="grid md:grid-cols-2 gap-4 text-sm">
+      <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4">
+        <div class="font-bold text-rose-700 mb-1">🔴 Les icônes = emojis</div>
+        Vrai point faible : un emoji s'affiche <b>différemment</b> selon l'OS et n'est <b>pas ownable</b>. → on les remplace par un jeu SVG maison.
+      </div>
+      <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+        <div class="font-bold text-amber-700 mb-1">🟠 La mascotte</div>
+        Elle est déjà <b>100 % faite main</b> (rien du net), mais <b>générique</b> dans le concept. → on lui donne une vraie personnalité (3 pistes plus bas).
+      </div>
+    </div>
+  </section>
+
+  <!-- Couleurs -->
+  <section class="bg-white rounded-3xl p-5 card mb-5">
+    <div class="chip text-violet-500 mb-3">Tokens couleur (conservés)</div>
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div><div class="h-12 rounded-xl" style="background:#7C5CFF"></div><div class="text-xs font-bold mt-1">Primaire</div><div class="text-[10px] text-gray-500">#7C5CFF</div></div>
+      <div><div class="h-12 rounded-xl border border-gray-200" style="background:#FAF7F2"></div><div class="text-xs font-bold mt-1">Fond</div><div class="text-[10px] text-gray-500">#FAF7F2</div></div>
+      <div><div class="h-12 rounded-xl" style="background:#34D399"></div><div class="text-xs font-bold mt-1">Succès</div><div class="text-[10px] text-gray-500">#34D399</div></div>
+      <div><div class="h-12 rounded-xl" style="background:#FB923C"></div><div class="text-xs font-bold mt-1">Streak</div><div class="text-[10px] text-gray-500">#FB923C</div></div>
+      <div><div class="h-12 rounded-xl" style="background:#F87171"></div><div class="text-xs font-bold mt-1">Erreur</div><div class="text-[10px] text-gray-500">#F87171</div></div>
+    </div>
+  </section>
+
+  <!-- Typo -->
+  <section class="bg-white rounded-3xl p-5 card mb-5">
+    <div class="chip text-violet-500 mb-3">Proposition typo (open-source, auto-hébergeable)</div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="rounded-2xl border border-gray-100 p-4">
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Titres · Baloo 2</div>
+        <div class="display text-3xl font-bold mt-1">Bouge un peu !</div>
+        <div class="text-[11px] text-gray-500 mt-1">Arrondie, chaleureuse, du caractère. (Licence OFL)</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-4">
+        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Texte · Nunito</div>
+        <div class="text-lg mt-1">Une courte pause active toutes les 50 minutes améliore la concentration de 30 %.</div>
+        <div class="text-[11px] text-gray-500 mt-1">Lisible, ronde, cohérente avec les titres. (Licence OFL)</div>
+      </div>
+    </div>
+    <p class="text-[11px] text-gray-400 mt-3">Aujourd'hui : police système (neutre, zéro identité). Ces deux polices sont gratuites et embarquables pour un rendu identique partout.</p>
+  </section>
+
+  <!-- Icônes avant/après -->
+  <section class="bg-white rounded-3xl p-5 card mb-5">
+    <div class="chip text-violet-500 mb-3">Jeu d'icônes custom — avant (emoji) / après (SVG maison)</div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+      <!-- chaque case : emoji puis icône custom -->
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">🏠</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><path d="M4 11 L12 4 L20 11"/><path d="M6 10 V19 H18 V10"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Accueil</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">💪</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><rect x="3" y="9" width="3.4" height="6" rx="1"/><rect x="17.6" y="9" width="3.4" height="6" rx="1"/><path d="M6.4 12 H17.6"/><path d="M2 10.5 V13.5"/><path d="M22 10.5 V13.5"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Exercices</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">📊</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><path d="M3 20 H21"/><path d="M6 20 V12"/><path d="M12 20 V5"/><path d="M18 20 V14"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Stats</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">👥</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="9" cy="8" r="3"/><path d="M3.5 19 a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 19 a4 4 0 0 1 6.5 -3.1"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Équipe</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">👤</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="3.6"/><path d="M5 20 a7 7 0 0 1 14 0"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Profil</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">⚙️</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><path d="M4 8 H20"/><circle cx="9" cy="8" r="2.2" fill="#fff"/><path d="M4 16 H20"/><circle cx="15" cy="16" r="2.2" fill="#fff"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Réglages</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">🔥</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico" style="stroke:#FB923C"><path d="M12 3 c3.5 3.5 5 6 5 9 a5 5 0 0 1 -10 0 c0 -2.2 1 -3.4 2.2 -4.4 c-.2 1.8 .8 2.4 .8 2.4 c1 -2 1.4 -4.6 -1 -7 z"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Streak</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">✨</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><path d="M12 3 L13.8 10.2 L21 12 L13.8 13.8 L12 21 L10.2 13.8 L3 12 L10.2 10.2 Z"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Points</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">🔔</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><path d="M6.5 16.5 C8.5 14 7.5 13 7.5 9.5 a4.5 4.5 0 0 1 9 0 c0 3.5 -1 4.5 1 7 z"/><path d="M10 20 a2 2 0 0 0 4 0"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Rappel</div>
+      </div>
+      <div class="rounded-2xl border border-gray-100 p-3 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <span class="text-2xl opacity-50">📅</span><span class="text-gray-300">→</span>
+          <svg viewBox="0 0 24 24" class="ico"><rect x="4" y="5.5" width="16" height="14.5" rx="2.5"/><path d="M4 10 H20"/><path d="M8.5 3 V7"/><path d="M15.5 3 V7"/></svg>
+        </div><div class="text-[11px] font-bold mt-2">Agenda</div>
+      </div>
+    </div>
+    <p class="text-[11px] text-gray-400 mt-3">Style retenu : <b>trait 2 px, coins arrondis, grille 24×24</b> — cohérent, lisible en petit, rendu <b>identique partout</b>. Couleur via <code>currentColor</code> (s'adapte aux états actif/inactif).</p>
+  </section>
+
+  <!-- Mascottes -->
+  <section class="bg-white rounded-3xl p-5 card mb-5">
+    <div class="chip text-violet-500 mb-1">3 pistes de mascotte — à départager</div>
+    <p class="text-xs text-gray-500 mb-4">On garde le système d'humeurs (endormie → héroïque). Choisis une direction, on l'affine ensuite.</p>
+    <div class="grid md:grid-cols-3 gap-4">
+
+      <!-- A : Momo, blob évolué -->
+      <div class="rounded-3xl border-2 border-violet-100 p-4 text-center">
+        <div class="chip text-violet-500">Piste A</div>
+        <h3 class="display text-xl font-bold">« Momo » — le blob qui grandit</h3>
+        <div class="grid place-items-center my-3">
+          <svg width="130" height="130" viewBox="0 0 180 180">
+            <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C86FF"/><stop offset="1" stop-color="#6B46FF"/></linearGradient></defs>
+            <path d="M90 22 C140 22 158 60 158 100 C158 146 128 162 90 162 C52 162 22 146 22 100 C22 60 40 22 90 22Z" fill="url(#ga)"/>
+            <ellipse cx="90" cy="120" rx="44" ry="30" fill="#fff" opacity=".18"/>
+            <path d="M26 116 q-10 6 -8 18" stroke="#6B46FF" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M154 116 q10 6 8 18" stroke="#6B46FF" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <circle cx="72" cy="86" r="7" fill="#1F2937"/><circle cx="108" cy="86" r="7" fill="#1F2937"/>
+            <circle cx="74" cy="84" r="2.2" fill="#fff"/><circle cx="110" cy="84" r="2.2" fill="#fff"/>
+            <circle cx="60" cy="104" r="6" fill="#FFB4C2" opacity=".8"/><circle cx="120" cy="104" r="6" fill="#FFB4C2" opacity=".8"/>
+            <path d="M70 112 Q90 132 110 112" stroke="#1F2937" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M96 40 l-9 16 h8 l-6 14" stroke="#FBBF24" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="text-xs text-gray-600">Évolution de l'existant : forme rassurante, <b>couleur signature</b>, petit <b>éclair d'énergie</b>, membres expressifs, accessoires déblocables. <span class="text-emerald-600 font-semibold">Peu risqué.</span></p>
+      </div>
+
+      <!-- B : Élan, qui s'étire -->
+      <div class="rounded-3xl border-2 border-violet-100 p-4 text-center">
+        <div class="chip text-violet-500">Piste B</div>
+        <h3 class="display text-xl font-bold">« Élan » — celui qui s'étire</h3>
+        <div class="grid place-items-center my-3">
+          <svg width="130" height="130" viewBox="0 0 180 180">
+            <path d="M64 30 q26 -16 52 0" stroke="#34D399" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+            <path d="M58 44 L74 70" stroke="#7C5CFF" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <path d="M122 44 L106 70" stroke="#7C5CFF" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <circle cx="55" cy="42" r="7" fill="#7C5CFF"/><circle cx="125" cy="42" r="7" fill="#7C5CFF"/>
+            <rect x="64" y="66" width="52" height="66" rx="26" fill="#7C5CFF"/>
+            <ellipse cx="90" cy="104" rx="22" ry="26" fill="#fff" opacity=".16"/>
+            <path d="M70 150 L74 132" stroke="#6B46FF" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <path d="M110 150 L106 132" stroke="#6B46FF" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <path d="M78 92 q4 -4 8 0" stroke="#1F2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M94 92 q4 -4 8 0" stroke="#1F2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M82 104 q8 8 16 0" stroke="#1F2937" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="text-xs text-gray-600">Un personnage <b>en mouvement</b> : il s'étire vraiment (les bras montent avec l'humeur). <span class="text-violet-600 font-semibold">Collé au métier anti-sédentarité, très distinctif.</span></p>
+      </div>
+
+      <!-- C : Hexo, géométrique -->
+      <div class="rounded-3xl border-2 border-violet-100 p-4 text-center">
+        <div class="chip text-violet-500">Piste C</div>
+        <h3 class="display text-xl font-bold">« Hexo » — dérivé du logo</h3>
+        <div class="grid place-items-center my-3">
+          <svg width="130" height="130" viewBox="0 0 180 180">
+            <defs><linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C5CFF"/><stop offset="1" stop-color="#5B3DF5"/></linearGradient></defs>
+            <path d="M90 24 L150 56 V120 L90 152 L30 120 V56 Z" fill="url(#gc)"/>
+            <path d="M90 24 L150 56 V120 L90 152 L30 120 V56 Z" fill="none" stroke="#fff" stroke-width="3" opacity=".25"/>
+            <circle cx="73" cy="92" r="8" fill="#fff"/><circle cx="107" cy="92" r="8" fill="#fff"/>
+            <circle cx="75" cy="93" r="3.5" fill="#1F2937"/><circle cx="109" cy="93" r="3.5" fill="#1F2937"/>
+            <path d="M74 116 Q90 130 106 116" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M96 58 l-8 14 h7 l-5 12" stroke="#FBBF24" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="text-xs text-gray-600">Mascotte = même « brique » que le logo (cohérence totale). Look <b>moderne / tech</b>, mémorisable, décline bien en icône d'app. <span class="text-violet-600 font-semibold">Plus corporate.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reco -->
+  <section class="rounded-3xl p-5 mb-3 text-white card" style="background:linear-gradient(135deg,#7C5CFF,#5B3DF5)">
+    <div class="chip text-white/80 mb-2">Recommandation de l'équipe</div>
+    <p class="text-sm leading-snug">On implémente <b>le jeu d'icônes maison en premier</b> (règle le bug cross-plateforme + ownership), <b>en même temps que le re-plateformage</b> (composant <code class="bg-black/20 px-1 rounded">&lt;Icon/&gt;</code>). En parallèle, tu choisis une <b>piste de mascotte</b> ; l'UX/UI l'affine (humeurs + accessoires) et le Dev l'intègre. La typo arrive avec le bundler (auto-hébergée).</p>
+  </section>
+
+  <p class="text-center text-[11px] text-gray-400 mt-4">Planche de proposition — aucun fichier produit modifié. Dis : « style d'icônes validé » + ta piste mascotte (A / B / C), ou demande des ajustements.</p>
+
+</div>
+</body>
+</html>

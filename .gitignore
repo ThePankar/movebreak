@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# Spécifique à Claude / outillage local — non publié
+CLAUDE.md
+.claude/
+
+# Docs de travail internes — non publiées
+docs/

@@ -35,7 +35,6 @@ h1,h2,h3,.font-display{font-family:'Baloo 2','Nunito',sans-serif;letter-spacing:
 .shadow-soft{box-shadow:0 10px 25px -10px rgba(124,92,255,.25),0 4px 8px -4px rgba(0,0,0,.06);}
 .pop{animation:pop .35s ease;}
 @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
-.nav-locked::after{content:"";position:absolute;inset:auto 8px 6px auto;width:6px;height:6px;border-radius:50%;background:#D1D5DB;}
 .fade-swap{animation:fadeSwap .5s ease;}
 @keyframes fadeSwap{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .scroll-pretty::-webkit-scrollbar{width:6px}
@@ -75,9 +74,12 @@ h1,h2,h3,.font-display{font-family:'Baloo 2','Nunito',sans-serif;letter-spacing:
 </svg>
 <div id="app"></div>
 <script type="text/babel">
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect } = React;
 
 const STORAGE_KEY = "movebreak_state_v1";
+const SNOOZE_MS = 10 * 60 * 1000; // report d'un rappel (« Plus tard » / réunion)
+const calcLevel = points => Math.floor((points||0)/100)+1; // 1 niveau / 100 pts
+const DEMO_MODE = true; // outils de démo (reset, simuler rappel, seed) ; passer à false pour la prod V2
 const todayKey = () => new Date().toISOString().slice(0,10);
 const defaultState = () => ({
   points:0, streak:0, lastActiveDate:null,
@@ -105,7 +107,7 @@ function loadState(){
     const t=todayKey();
     if(s.lastActiveDate && s.lastActiveDate!==t){
       const yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
-      const completedYest=(s.pausesByDay[s.lastActiveDate]||0)>=3;
+      const completedYest=(s.pausesByDay[s.lastActiveDate]||0)>=(s.goalPerDay||6);
       if(s.lastActiveDate!==yest) s.streak=0;
       else if(!completedYest) s.streak=0;
     }
@@ -248,16 +250,17 @@ function BadPosture(){
 }
 
 function EyeRule(){
+  const uid = (React.useId ? React.useId() : "er").replace(/[:]/g,"");
   return (
     <svg viewBox="0 0 280 110" className="w-full h-auto">
       <rect x="20" y="40" width="60" height="40" rx="3" fill="#1F2937"/>
       <rect x="23" y="43" width="54" height="34" rx="2" fill="#7C5CFF" opacity=".4"/>
       <circle cx="115" cy="60" r="13" fill="#FCD9B6"/>
       <circle cx="119" cy="58" r="2" fill="#1F2937"/>
-      <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <defs><marker id={"arr"+uid} markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
         <path d="M0,0 L8,4 L0,8 Z" fill="#34D399"/>
       </marker></defs>
-      <path d="M135,60 L230,60" stroke="#34D399" strokeWidth="2" strokeDasharray="4 3" markerEnd="url(#arr)"/>
+      <path d="M135,60 L230,60" stroke="#34D399" strokeWidth="2" strokeDasharray="4 3" markerEnd={"url(#arr"+uid+")"}/>
       <path d="M245,80 L245,55" stroke="#92400E" strokeWidth="3"/>
       <circle cx="245" cy="48" r="12" fill="#34D399"/>
       <text x="35" y="100" fontSize="9" fill="#6B7280">Écran</text>
@@ -330,7 +333,7 @@ const MOCK_TEAM = [
   {name:"Léa",   avatar:"🌟", points:180},
   {name:"Tom",   avatar:"🦊", points:120},
 ];
-function loadTeamScores(code){
+function loadTeamScores(){
   // V1 : pas de backend → données mock pour l'aperçu (teaser).
   // V2 : return fetch(`/api/team/${code}`).then(r=>r.json());
   return MOCK_TEAM;
@@ -464,37 +467,6 @@ function Sidebar({ onClose, onCollapse }){
   );
 }
 
-// Vagues SVG décoratives — habillage subtil de la zone vide
-function BackgroundWaves(){
-  return (
-    <div className="pointer-events-none fixed inset-0 lg:right-[380px] xl:right-[420px] overflow-hidden -z-10">
-      <svg viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full">
-        <defs>
-          <linearGradient id="wg1" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#7C5CFF" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#7C5CFF" stopOpacity=".18"/>
-            <stop offset="100%" stopColor="#7C5CFF" stopOpacity="0"/>
-          </linearGradient>
-          <linearGradient id="wg2" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#A593FF" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#A593FF" stopOpacity=".22"/>
-            <stop offset="100%" stopColor="#A593FF" stopOpacity="0"/>
-          </linearGradient>
-          <linearGradient id="wg3" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#34D399" stopOpacity="0"/>
-            <stop offset="50%" stopColor="#34D399" stopOpacity=".14"/>
-            <stop offset="100%" stopColor="#34D399" stopOpacity="0"/>
-          </linearGradient>
-        </defs>
-        <path d="M-100,180 C150,80 350,260 550,150 C750,40 900,200 1100,120" stroke="url(#wg1)" strokeWidth="2.5" fill="none"/>
-        <path d="M-100,360 C200,300 380,460 600,360 C800,270 950,400 1100,340" stroke="url(#wg2)" strokeWidth="2" fill="none"/>
-        <path d="M-100,560 C180,500 400,640 600,540 C800,440 950,580 1100,520" stroke="url(#wg1)" strokeWidth="1.5" fill="none"/>
-        <path d="M-100,720 C200,660 400,780 620,700 C820,620 980,720 1100,680" stroke="url(#wg3)" strokeWidth="2" fill="none"/>
-      </svg>
-    </div>
-  );
-}
-
 function moodFor(p,g){ if(p>=g) return "hero"; if(p>=Math.ceil(g/2)) return "happy"; if(p>=1) return "neutral"; return "sleepy"; }
 function greetingFor(mood){
   const map = {
@@ -571,8 +543,8 @@ function BottomNav({ active, onNavigate }){
         {NAV_ITEMS.map(it=>{
           const isActive=it.id===active;
           return (
-            <li key={it.id} className={"relative "+(it.locked?"nav-locked":"")}>
-              <button disabled={it.locked} onClick={()=>!it.locked&&onNavigate(it.id)} className={"w-full py-2.5 flex flex-col items-center gap-0.5 "+(it.locked?"opacity-50 cursor-not-allowed":"")}>
+            <li key={it.id} className="relative">
+              <button onClick={()=>onNavigate(it.id)} className="w-full py-3 flex flex-col items-center gap-0.5">
                 <Icon name={it.icon} size={26} className={isActive?"pop":""}/>
                 <span className={"text-[10px] "+(isActive?"text-violet-600 font-semibold":"text-gray-500")}>{it.label}</span>
                 {isActive && <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-violet-500"/>}
@@ -592,11 +564,10 @@ function LeftRail({ active, onNavigate }){
       {NAV_ITEMS.map(it=>{
         const isActive=it.id===active;
         return (
-          <button key={it.id} disabled={it.locked} onClick={()=>!it.locked&&onNavigate(it.id)} title={it.locked?it.label+" (à venir)":it.label}
-            className={"relative w-[72px] py-2.5 rounded-2xl flex flex-col items-center gap-1 transition "+(it.locked?"opacity-40 cursor-not-allowed":"hover:bg-violet-50")+(isActive?" bg-violet-100":"")}>
+          <button key={it.id} onClick={()=>onNavigate(it.id)} title={it.label}
+            className={"relative w-[72px] py-2.5 rounded-2xl flex flex-col items-center gap-1 transition hover:bg-violet-50"+(isActive?" bg-violet-100":"")}>
             <Icon name={it.icon} size={26} className={isActive?"pop":""}/>
             <span className={"text-[10px] "+(isActive?"text-violet-700 font-semibold":"text-gray-500")}>{it.label}</span>
-            {it.locked && <span className="absolute top-1.5 right-2.5 text-[8px] opacity-70">🔒</span>}
           </button>
         );
       })}
@@ -782,9 +753,9 @@ function Settings({ state, profile, onPatch, onReset, onLogout, onOpenProfile })
         <div className="text-sm font-semibold mb-2">Plage horaire active</div>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-gray-500">De</span>
-          <select value={state.activeStartHour} onChange={e=>onPatch({activeStartHour:parseInt(e.target.value,10)})} className="border border-gray-200 rounded-lg px-2 py-1.5 bg-white">{hours.map(h=><option key={h} value={h}>{h}h</option>)}</select>
+          <select aria-label="Heure de début" value={state.activeStartHour} onChange={e=>onPatch({activeStartHour:parseInt(e.target.value,10)})} className="border border-gray-200 rounded-lg px-2 py-1.5 bg-white">{hours.map(h=><option key={h} value={h}>{h}h</option>)}</select>
           <span className="text-gray-500">à</span>
-          <select value={state.activeEndHour} onChange={e=>onPatch({activeEndHour:parseInt(e.target.value,10)})} className="border border-gray-200 rounded-lg px-2 py-1.5 bg-white">{hours.map(h=><option key={h} value={h}>{h}h</option>)}</select>
+          <select aria-label="Heure de fin" value={state.activeEndHour} onChange={e=>onPatch({activeEndHour:parseInt(e.target.value,10)})} className="border border-gray-200 rounded-lg px-2 py-1.5 bg-white">{hours.map(h=><option key={h} value={h}>{h}h</option>)}</select>
         </div>
         <p className="text-[11px] text-gray-400 mt-2">Hors de cette plage, les rappels automatiques ne se déclencheront pas (effectif avec les rappels auto, V2).</p>
       </div>
@@ -830,8 +801,8 @@ function Welcome({ onStart }){
         <h1 className="text-2xl font-bold mt-2">Bienvenue sur MoveBreak</h1>
         <p className="text-sm text-gray-500 mt-1 leading-snug">Crée ton profil pour personnaliser ton expérience. Local pour l'instant — compte en ligne à venir.</p>
         <div className="text-left mt-5">
-          <label className="text-xs font-semibold text-gray-600">Ton prénom</label>
-          <input value={name} onChange={e=>setName(e.target.value)} placeholder="Ex : Marie" className="w-full mt-1 border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-violet-400"/>
+          <label htmlFor="welcome-name" className="text-xs font-semibold text-gray-600">Ton prénom</label>
+          <input id="welcome-name" value={name} onChange={e=>setName(e.target.value)} placeholder="Ex : Marie" className="w-full mt-1 border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-violet-400"/>
         </div>
         <button onClick={()=>onStart(name)} className="btn-press mt-5 w-full py-3 rounded-2xl text-white font-semibold shadow-soft" style={{background:"linear-gradient(135deg,#7C5CFF,#5B3DF5)"}}>Commencer</button>
         <button onClick={()=>onStart("")} className="mt-2 w-full py-2 text-sm text-gray-500 hover:text-violet-600">Continuer en invité</button>
@@ -843,7 +814,7 @@ function Welcome({ onStart }){
 function Profile({ state, onPatch }){
   const profile = state.profile;
   const points = state.points, streak = state.streak;
-  const level = Math.floor((points||0)/100)+1;
+  const level = calcLevel(points);
   const currentStage = stageForLevel(level);
   return (
     <div>
@@ -855,7 +826,7 @@ function Profile({ state, onPatch }){
       <div className="bg-white rounded-3xl p-5 shadow-soft mb-4 flex items-center gap-4">
         <ProfileAvatar size={80} rounded="rounded-2xl" photoUrl={profile.avatarUrl}/>
         <div className="flex-1 min-w-0">
-          <input value={profile.name} onChange={e=>onPatch({name:e.target.value, guest:false})} className="w-full text-lg font-bold border-b border-transparent hover:border-gray-200 focus:border-violet-400 focus:outline-none"/>
+          <input aria-label="Ton prénom" value={profile.name} onChange={e=>onPatch({name:e.target.value, guest:false})} className="w-full text-lg font-bold border-b border-transparent hover:border-gray-200 focus:border-violet-400 focus:outline-none"/>
           <div className="text-[11px] text-gray-500 mt-1">{profile.guest?"Invité · profil local":"Profil local"} · Niveau {level}</div>
           <div className="text-[10px] text-gray-400 mt-1">📷 Photo de profil bientôt (import ou Outlook)</div>
         </div>
@@ -892,7 +863,7 @@ function Stats({ pausesByDay, points, streak, maxStreak, goalPerDay, exercisesDo
   const series = [];
   for(let i=range-1;i>=0;i--){ const d=new Date(Date.now()-i*86400000); series.push({key:d.toISOString().slice(0,10), day:d, val: pausesByDay[d.toISOString().slice(0,10)]||0}); }
   const total = Object.values(pausesByDay).reduce((a,b)=>a+b,0);
-  const level = Math.floor((points||0)/100)+1;
+  const level = calcLevel(points);
   const maxVal = Math.max(1, ...series.map(s=>s.val));
   const hasData = total>0;
   const goalEver = Object.values(pausesByDay).some(v=>v>=goalPerDay);
@@ -970,7 +941,7 @@ function Stats({ pausesByDay, points, streak, maxStreak, goalPerDay, exercisesDo
 // Écran 7 — Tableau d'équipe (teaser V1, tout est mock/désactivé)
 // ============================================================
 function Team(){
-  const scores = loadTeamScores(null); // V2 : loadTeamScores(state.teamCode)
+  const scores = loadTeamScores(); // V2 : loadTeamScores(state.teamCode)
   return (
     <div>
       <div className="mb-3">
@@ -1047,9 +1018,9 @@ function App(){
   const pausesToday = state.pausesByDay[t]||0;
   const refusalsToday = state.refusalsByDay[t]||0;
   const mood = moodFor(pausesToday,state.goalPerDay);
-  const greet = useMemo(()=>greetingFor(mood),[mood]);
+  const greet = greetingFor(mood);
   const msLeft = (state.nextReminderAt||Date.now())-now;
-  const level = Math.floor((state.points||0)/100)+1;
+  const level = calcLevel(state.points);
   const mascotStage = stageForLevel(level);
   const stageName = MASCOT_STAGE_NAMES[mascotStage-1];
   const exTotalMs = state.exerciseDurationSec*1000;
@@ -1059,7 +1030,7 @@ function App(){
     const next={...state};
     next.pausesByDay={...next.pausesByDay,[t]:pausesToday+1};
     next.points+=10; next.lastActiveDate=t;
-    if(pausesToday+1===3) next.streak+=1;
+    if(pausesToday+1===state.goalPerDay) next.streak+=1;
     next.maxStreak=Math.max(state.maxStreak||0, next.streak);
     next.nextReminderAt=Date.now()+intervalMs;
     setState(next); setJustAwarded(true); setTimeout(()=>setJustAwarded(false),900);
@@ -1068,7 +1039,7 @@ function App(){
     const next={...state};
     next.refusalsByDay={...next.refusalsByDay,[t]:refusalsToday+1};
     next.points=Math.max(0,next.points-5);
-    next.nextReminderAt=Date.now()+10*60*1000;
+    next.nextReminderAt=Date.now()+SNOOZE_MS;
     setState(next);
   }
   function resetDemo(){
@@ -1089,7 +1060,7 @@ function App(){
   function fireReminder(){
     // V2 : appelé automatiquement quand msLeft atteint 0 (le bouton démo sera retiré).
     if(state.calendarMockEnabled && state.inMeeting){
-      const next={...state,nextReminderAt:Date.now()+10*60*1000};
+      const next={...state,nextReminderAt:Date.now()+SNOOZE_MS};
       setState(next);
       showNotice("🔕 Réunion en cours — rappel reporté de 10 min");
       return;
@@ -1149,7 +1120,6 @@ function App(){
 
   return (
     <div className={"min-h-screen relative lg:pl-[88px] transition-[padding] duration-300 "+(santeOpen?"lg:pr-[380px] xl:pr-[420px]":"lg:pr-0")}>
-      <BackgroundWaves/>
       <LeftRail active={view} onNavigate={navigate}/>
       <main className="relative max-w-2xl mx-auto px-4 pt-6 pb-28 lg:pb-10">
         <header className="flex items-center justify-between mb-4">
@@ -1157,12 +1127,12 @@ function App(){
             <div className="w-9 h-9 rounded-xl bg-violet-500 text-white grid place-items-center font-bold shadow-soft">M</div>
             <div>
               <div className="text-base font-bold leading-none font-display">MoveBreak</div>
-              <div className="text-[11px] text-gray-500">vendredi 29 mai</div>
+              <div className="text-[11px] text-gray-500 capitalize">{new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={()=>navigate("profile")} title="Mon profil" aria-label="Mon profil" className="rounded-full hover:opacity-80 transition"><ProfileAvatar size={36} photoUrl={state.profile.avatarUrl}/></button>
-            <button onClick={resetDemo} title="Réinitialiser (démo)" className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 hover:bg-gray-50">↻ démo</button>
+            {DEMO_MODE && (<button onClick={resetDemo} title="Réinitialiser (démo)" className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 hover:bg-gray-50">↻ démo</button>)}
           </div>
         </header>
 
@@ -1216,7 +1186,7 @@ function App(){
           <button onClick={()=>navigate("team")} className="text-xs px-3 py-1.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700">Découvrir →</button>
         </section>
 
-        <section className="rounded-3xl p-4 mb-2 border border-dashed border-gray-300 bg-white/70">
+        {DEMO_MODE && (<section className="rounded-3xl p-4 mb-2 border border-dashed border-gray-300 bg-white/70">
           <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2">🔧 Zone démo (test V1)</div>
           <div className="flex flex-wrap items-center gap-2">
             <button onClick={fireReminder} className="btn-press text-xs px-3 py-2 rounded-full bg-violet-100 text-violet-700 font-semibold">🔔 Simuler un rappel</button>
@@ -1224,7 +1194,7 @@ function App(){
             <button onClick={seedDemoHistory} className="btn-press text-xs px-3 py-2 rounded-full bg-violet-100 text-violet-700 font-semibold">📊 Historique démo</button>
           </div>
           <p className="text-[10px] text-gray-400 mt-2">Provisoire : le rappel passera en automatique (compte à rebours à 0) et l'agenda sera lié à Outlook. Le mock deviendra une option dans les Réglages.</p>
-        </section>
+        </section>)}
         </>)}
 
         {view==="library" && (<Library onPick={launchPractice}/>)}

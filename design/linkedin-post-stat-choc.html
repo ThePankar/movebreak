@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MoveBreak — Post LinkedIn (stat choc)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#FAF7F2;}
+  .stage{position:relative;width:100vmin;height:100vmin;margin:0 auto;background:#FAF7F2;
+         font-family:'Nunito',sans-serif;color:#1F2937;overflow:hidden;}
+  .waves{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+  .frame{position:relative;z-index:2;width:100%;height:100%;
+         display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+         padding:7vmin 6vmin 6vmin;text-align:center;}
+
+  /* ---- groupe haut ---- */
+  .kicker{font-weight:800;color:#7C5CFF;letter-spacing:.5vmin;font-size:2.5vmin;
+          text-transform:uppercase;opacity:.9;display:flex;align-items:center;gap:1.4vmin;}
+  .kicker .bar{width:4vmin;height:.35vmin;background:#7C5CFF;opacity:.6;border-radius:1vmin;}
+  .num-wrap{display:flex;align-items:flex-end;justify-content:center;line-height:.82;margin-top:1.5vmin;
+            will-change:transform;transform-origin:50% 60%;}
+  .num{font-family:'Baloo 2',cursive;font-weight:800;color:#7C5CFF;font-size:33vmin;
+       letter-spacing:-.5vmin;text-shadow:0 1.4vmin 3vmin rgba(124,92,255,.18);}
+  .unit{font-family:'Baloo 2',cursive;font-weight:800;color:#7C5CFF;font-size:15vmin;
+        margin-left:.4vmin;margin-bottom:3.6vmin;}
+  .sub{font-weight:700;color:#4B5563;font-size:3.5vmin;line-height:1.28;max-width:74vmin;margin-top:2vmin;}
+  .sub b{color:#1F2937;}
+  .src{font-weight:600;color:#9AA2AE;font-size:1.95vmin;margin-top:1.8vmin;letter-spacing:.02vmin;}
+
+  /* ---- mascotte ---- */
+  .mascot{width:40vmin;height:40vmin;}
+
+  /* ---- signature ---- */
+  .sig{display:flex;flex-direction:column;align-items:center;gap:.6vmin;}
+  .brand{display:flex;align-items:center;gap:1.6vmin;}
+  .brand .mark{width:6.2vmin;height:6.2vmin;border-radius:1.8vmin;background:#7C5CFF;color:#fff;
+        font-family:'Baloo 2',cursive;font-weight:800;font-size:4vmin;display:grid;place-items:center;
+        box-shadow:0 1vmin 2.4vmin rgba(124,92,255,.35);}
+  .brand .name{font-family:'Baloo 2',cursive;font-weight:800;font-size:5.4vmin;color:#2A2540;letter-spacing:-.1vmin;}
+  .tag{font-weight:700;color:#6B7280;font-size:2.6vmin;}
+  .tag .dot{color:#34D399;font-weight:800;}
+</style>
+</head>
+<body>
+<div class="stage">
+  <!-- vagues décoratives (identité MoveBreak) -->
+  <svg class="waves" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="wv1" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#7C5CFF" stop-opacity="0"/><stop offset="50%" stop-color="#7C5CFF" stop-opacity=".28"/><stop offset="100%" stop-color="#7C5CFF" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="wv2" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#A593FF" stop-opacity="0"/><stop offset="50%" stop-color="#A593FF" stop-opacity=".3"/><stop offset="100%" stop-color="#A593FF" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="wv3" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#34D399" stop-opacity="0"/><stop offset="50%" stop-color="#34D399" stop-opacity=".24"/><stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M-50,150 C200,60 380,250 600,150 C800,60 950,200 1080,130" stroke="url(#wv1)" stroke-width="3" fill="none"/>
+    <path d="M-50,860 C220,790 420,930 640,840 C840,760 980,880 1080,820" stroke="url(#wv2)" stroke-width="2.6" fill="none"/>
+    <path d="M-50,930 C220,880 430,990 650,910 C850,840 980,940 1080,900" stroke="url(#wv3)" stroke-width="2.4" fill="none"/>
+  </svg>
+
+  <div class="frame">
+    <!-- ===== haut ===== -->
+    <div>
+      <div class="kicker"><span class="bar"></span>Le chiffre qui dérange<span class="bar"></span></div>
+      <div class="num-wrap" id="bignum"><span class="num">9</span><span class="unit">h</span></div>
+      <div class="sub">par jour <b>assis</b>, en moyenne, quand on travaille devant un écran.</div>
+      <div class="src">Source : The Lancet Public Health · 2025</div>
+    </div>
+
+    <!-- ===== mascotte Esprit (stade 5 — « L'Harmonie », mood hero) ===== -->
+    <svg class="mascot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glowE" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="bodyE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF8EE"/><stop offset="100%" stop-color="#FDE9C9"/></linearGradient>
+        <radialGradient id="haloE" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFE6BD" stop-opacity="0.9"/><stop offset="100%" stop-color="#FFE6BD" stop-opacity="0"/></radialGradient>
+        <radialGradient id="coreE" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF7DC"/><stop offset="40%" stop-color="#FFD873"/><stop offset="100%" stop-color="#FFD873" stop-opacity="0"/></radialGradient>
+        <linearGradient id="ringE" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FBBF24"/><stop offset="50%" stop-color="#34D399"/><stop offset="100%" stop-color="#FBBF24"/></linearGradient>
+      </defs>
+      <g id="esprit-float">
+        <circle id="esprit-halo" cx="100" cy="104" r="80" fill="url(#haloE)"/>
+        <g id="esprit-rays" opacity="0.6">
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(0 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(45 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(90 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(135 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(180 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(225 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(270 100 100)"/>
+          <path d="M100 16 q11 17 0 32 q-11 -15 0 -32 z" fill="#FBBF24" opacity="0.5" transform="rotate(315 100 100)"/>
+        </g>
+        <circle id="esprit-ring" cx="100" cy="102" r="86" fill="none" stroke="url(#ringE)" stroke-width="3" stroke-dasharray="6 10" opacity="0.8"/>
+        <g>
+          <path d="M100 30 C141 30 166 60 166 100 C166 132 150 150 150 150 C150 150 140 142 132 150 C124 158 120 150 112 154 C104 158 96 158 88 154 C80 150 76 158 68 150 C60 142 50 150 50 150 C50 150 34 132 34 100 C34 60 59 30 100 30 Z" fill="url(#bodyE)" stroke="#F0D49E" stroke-width="2.5"/>
+          <ellipse cx="100" cy="118" rx="40" ry="30" fill="#fff" opacity="0.22"/>
+          <path d="M100 150 q-9 14 -4 26 q9 -6 7 -18 q6 10 0 20 q11 -8 4 -28 z" fill="#FBBF24" opacity="0.5"/>
+          <path d="M100 48 l4.5 8 9 1.5 -6.5 6.5 1.5 9 -8.5 -4.5 -8.5 4.5 1.5 -9 -6.5 -6.5 9 -1.5 z" fill="#FFE08A" stroke="#F4C752" stroke-width="1"/>
+          <circle cx="100" cy="120" r="18" fill="url(#coreE)" filter="url(#glowE)"/>
+          <circle cx="100" cy="120" r="5" fill="#FFF3C4"/>
+          <g>
+            <ellipse cx="83" cy="92" rx="7.5" ry="11" fill="#2B3A55"/>
+            <ellipse cx="117" cy="92" rx="7.5" ry="11" fill="#2B3A55"/>
+            <circle cx="85" cy="89" r="2.3" fill="#fff"/><circle cx="119" cy="89" r="2.3" fill="#fff"/>
+          </g>
+          <path d="M86 102 Q100 124 114 102" stroke="#2B3A55" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="70" cy="104" r="6" fill="#FFC6D2" opacity="0.7"/><circle cx="130" cy="104" r="6" fill="#FFC6D2" opacity="0.7"/>
+          <g stroke="#F0D49E" stroke-width="8" stroke-linecap="round" fill="none">
+            <path d="M58 132 q-12 8 -14 20"/><path d="M142 132 q12 8 14 20"/>
+          </g>
+        </g>
+        <g id="esprit-sparkles" fill="#FFE08A">
+          <circle cx="40" cy="60" r="2.5"/><circle cx="160" cy="56" r="2"/><circle cx="166" cy="120" r="2.5"/><circle cx="34" cy="120" r="2"/>
+        </g>
+      </g>
+    </svg>
+
+    <!-- ===== signature ===== -->
+    <div class="sig">
+      <div class="brand">
+        <div class="mark">M</div>
+        <div class="name">MoveBreak</div>
+      </div>
+      <div class="tag">Bouger en douceur <span class="dot">·</span> 2 min à la fois</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Pilotage de la frame d'animation pour la capture GIF (?f=index&n=total).
+  // Sans paramètre : rend l'image fixe (état de repos).
+  (function(){
+    var q = new URLSearchParams(location.search);
+    var n = parseInt(q.get('n')||'0',10);
+    var f = parseInt(q.get('f')||'0',10);
+    var t = (n>0) ? ((f%n)+n)%n / n : 0;            // 0..1, bouclage parfait
+    var TAU = Math.PI*2;
+    function setT(id,tr){ var el=document.getElementById(id); if(el) el.setAttribute('transform',tr); }
+
+    // flottement vertical de toute la mascotte
+    setT('esprit-float','translate(0 '+(-10*Math.sin(TAU*t)).toFixed(2)+')');
+    // halo qui respire (scale autour de 100,104)
+    var hs=(1+0.05*Math.sin(TAU*t));
+    setT('esprit-halo','translate('+(100-100*hs).toFixed(2)+' '+(104-104*hs).toFixed(2)+') scale('+hs.toFixed(3)+')');
+    // rayons dorés en rotation (boucle)
+    setT('esprit-rays','rotate('+(360*t).toFixed(2)+' 100 100)');
+    // anneau pointillé en rotation inverse
+    setT('esprit-ring','rotate('+(-360*t).toFixed(2)+' 100 102)');
+    // étincelles qui scintillent
+    var sp=document.getElementById('esprit-sparkles'); if(sp) sp.setAttribute('opacity',(0.5+0.5*Math.abs(Math.sin(TAU*t+0.6))).toFixed(2));
+    // léger battement du chiffre
+    var bn=document.getElementById('bignum'); if(bn) bn.style.transform='scale('+(1+0.022*Math.sin(2*TAU*t)).toFixed(3)+')';
+
+    // signal "prêt" une fois les polices chargées (utile pour la capture)
+    if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ document.documentElement.setAttribute('data-ready','1'); }); }
+    else { document.documentElement.setAttribute('data-ready','1'); }
+  })();
+</script>
+</body>
+</html>

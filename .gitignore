@@ -4,7 +4,7 @@ node_modules/
 .vscode/
 .idea/
 
-# Spécifique à Claude / outillage local — non publié
+# Outillage & docs internes — non publiés
 CLAUDE.md
 .claude/
 

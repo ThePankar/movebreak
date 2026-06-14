@@ -15,6 +15,7 @@ const ROOT = __dirname;
 const TEMPLATE = path.join(ROOT, "src", "template.html");
 const APP = path.join(ROOT, "src", "app.jsx");
 const OUT = path.join(ROOT, "movebreak.html");
+const OUT_INDEX = path.join(ROOT, "index.html"); // copie servie à la racine par GitHub Pages
 
 function read(file) {
   if (!fs.existsSync(file)) {
@@ -35,6 +36,7 @@ if (!template.includes("%APP%")) {
 const html = template.replace("%APP%", app);
 
 fs.writeFileSync(OUT, html);
+fs.writeFileSync(OUT_INDEX, html);
 
 const sizeKb = (html.length / 1024).toFixed(1);
-console.log(`✓ movebreak.html généré (${sizeKb} Ko, ${html.split("\n").length} lignes)`);
+console.log(`✓ movebreak.html + index.html générés (${sizeKb} Ko, ${html.split("\n").length} lignes)`);

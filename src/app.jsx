@@ -51,7 +51,7 @@ const STAGE_STYLE = {
 };
 function stageForLevel(level){ return level<3?1 : level<5?2 : level<8?3 : level<12?4 : 5; }
 
-function Mascot({ mood="neutral", size=140, stage=1 }){
+function Mascot({ mood="neutral", size=140, stage=1, float=true }){
   const uid = (React.useId ? React.useId() : "m").replace(/[:]/g,"");
   const S = STAGE_STYLE[stage] || STAGE_STYLE[1];
   const ref = (n)=>"url(#"+n+uid+")";
@@ -60,7 +60,7 @@ function Mascot({ mood="neutral", size=140, stage=1 }){
   const mouth = ({sleepy:"M92 106 Q100 109 108 106", neutral:"M91 106 Q100 114 109 106", happy:"M88 104 Q100 120 112 104", hero:"M86 102 Q100 124 114 102"})[mood] || "M91 106 Q100 114 109 106";
   const body = "M100 30 C141 30 166 60 166 100 C166 132 150 150 150 150 C150 150 140 142 132 150 C124 158 120 150 112 154 C104 158 96 158 88 154 C80 150 76 158 68 150 C60 142 50 150 50 150 C50 150 34 132 34 100 C34 60 59 30 100 30 Z";
   return (
-    <svg width={size} height={size} viewBox="0 0 200 200" className="blob-float">
+    <svg width={size} height={size} viewBox="0 0 200 200" className={float?"blob-float":""}>
       <defs>
         <filter id={"glow"+uid} x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <linearGradient id={"body"+uid} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={S.from}/><stop offset="100%" stopColor={S.to}/></linearGradient>
@@ -244,7 +244,7 @@ const EXERCISES = loadExercises();
 // ============================================================
 // Équipe (écran 7) — teaser V1. Pré-câblage V2 : schéma BDD-ready + hook.
 // En V2 : remplacer loadTeamScores() par fetch(`/api/team/${code}`) et
-// activer la saisie de code (auth équipe à 6 caractères, cf. CLAUDE.md).
+// activer la saisie de code (auth équipe à 6 caractères, prévu en V2).
 // ============================================================
 const MOCK_TEAM = [
   {name:"Marie", avatar:"😎", points:320},
@@ -433,7 +433,7 @@ function fmtMMSS(ms){ if(ms<0) ms=0; const s=Math.floor(ms/1000); return String(
 function StatCard({ icon, label, value, accent="#7C5CFF", sub }){
   return (
     <div className="bg-white rounded-2xl p-4 shadow-soft flex items-center gap-3">
-      <div className="w-12 h-12 rounded-xl grid place-items-center text-xl" style={{background:accent+"1A"}}>{icon}</div>
+      <div className="w-12 h-12 rounded-xl grid place-items-center" style={{background:accent+"1A"}}><Icon name={icon} size={24}/></div>
       <div className="flex-1 min-w-0">
         <div className="text-xs uppercase tracking-wide text-gray-500">{label}</div>
         <div className="text-2xl font-bold leading-tight" style={{color:accent}}>{value}</div>
@@ -465,25 +465,38 @@ function ProgressBar({ value, max }){
   return <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all duration-500" style={{width:pct+"%",background:"linear-gradient(90deg,#7C5CFF,#34D399)"}}/></div>;
 }
 
-// Sections de navigation. V1 : seules "Accueil" et "Exercices" sont actives.
+// ============================================================
+// Jeu d'icônes — Fluent Emoji Flat via Iconify (web component, chargé par CDN).
+// Colorées, douces, rendu IDENTIQUE sur tous les OS. <Icon name size className/>.
+// V2 : bundler les icônes (Iconify offline) sans changer les appels.
+// ============================================================
+const ICON_MAP = {
+  home:"house", exercises:"flexed-biceps", team:"busts-in-silhouette",
+  profile:"bust-in-silhouette", settings:"gear",
+  streak:"fire", points:"sparkles", bell:"bell", calendar:"spiral-calendar",
+};
+function Icon({ name, size=24, className="" }){
+  return (<iconify-icon icon={"fluent-emoji-flat:"+(ICON_MAP[name]||name)} style={{fontSize:size+"px"}} className={className} aria-hidden="true"></iconify-icon>);
+}
+
+// Sections de navigation (toutes actives en V1).
 const NAV_ITEMS = [
-  {id:"home",icon:"🏠",label:"Accueil"},
-  {id:"library",icon:"💪",label:"Exercices"},
-  {id:"stats",icon:"📊",label:"Stats"},
-  {id:"team",icon:"👥",label:"Équipe"},
-  {id:"profile",icon:"👤",label:"Profil"},
-  {id:"settings",icon:"⚙️",label:"Réglages"},
+  {id:"home",icon:"home",label:"Accueil"},
+  {id:"library",icon:"exercises",label:"Exercices"},
+  {id:"team",icon:"team",label:"Équipe"},
+  {id:"profile",icon:"profile",label:"Profil"},
+  {id:"settings",icon:"settings",label:"Réglages"},
 ];
 function BottomNav({ active, onNavigate }){
   return (
     <nav className="fixed bottom-0 inset-x-0 lg:hidden bg-white/95 backdrop-blur border-t border-gray-100 z-30">
-      <ul className="max-w-md mx-auto grid grid-cols-6">
+      <ul className="max-w-md mx-auto grid grid-cols-5">
         {NAV_ITEMS.map(it=>{
           const isActive=it.id===active;
           return (
             <li key={it.id} className={"relative "+(it.locked?"nav-locked":"")}>
               <button disabled={it.locked} onClick={()=>!it.locked&&onNavigate(it.id)} className={"w-full py-2.5 flex flex-col items-center gap-0.5 "+(it.locked?"opacity-50 cursor-not-allowed":"")}>
-                <span className={"text-xl "+(isActive?"pop":"")}>{it.icon}</span>
+                <Icon name={it.icon} size={26} className={isActive?"pop":""}/>
                 <span className={"text-[10px] "+(isActive?"text-violet-600 font-semibold":"text-gray-500")}>{it.label}</span>
                 {isActive && <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-violet-500"/>}
               </button>
@@ -504,7 +517,7 @@ function LeftRail({ active, onNavigate }){
         return (
           <button key={it.id} disabled={it.locked} onClick={()=>!it.locked&&onNavigate(it.id)} title={it.locked?it.label+" (à venir)":it.label}
             className={"relative w-[72px] py-2.5 rounded-2xl flex flex-col items-center gap-1 transition "+(it.locked?"opacity-40 cursor-not-allowed":"hover:bg-violet-50")+(isActive?" bg-violet-100":"")}>
-            <span className={"text-xl "+(isActive?"pop":"")}>{it.icon}</span>
+            <Icon name={it.icon} size={26} className={isActive?"pop":""}/>
             <span className={"text-[10px] "+(isActive?"text-violet-700 font-semibold":"text-gray-500")}>{it.label}</span>
             {it.locked && <span className="absolute top-1.5 right-2.5 text-[8px] opacity-70">🔒</span>}
           </button>
@@ -678,7 +691,7 @@ function Settings({ state, profile, onPatch, onReset, onLogout, onOpenProfile })
         <p className="text-xs text-gray-500 mt-0.5">Tout est enregistré localement, effet immédiat.</p>
       </div>
       <div className="bg-white rounded-2xl p-4 shadow-soft mb-3 flex items-center gap-3">
-        <button onClick={onOpenProfile} title="Voir mon profil" className="w-12 h-12 rounded-full bg-violet-100 grid place-items-center text-2xl shrink-0 hover:bg-violet-200 transition">{profile.avatar}</button>
+        <button onClick={onOpenProfile} title="Voir mon profil" className="shrink-0 rounded-full hover:opacity-80 transition"><ProfileAvatar size={48} photoUrl={profile.avatarUrl}/></button>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold truncate">{profile.name}</div>
           <div className="text-[11px] text-gray-500">{profile.guest?"Invité · profil local":"Profil local (compte en ligne à venir)"}</div>
@@ -710,11 +723,29 @@ function Settings({ state, profile, onPatch, onReset, onLogout, onOpenProfile })
 // ============================================================
 // Profil & connexion (locale en V1 ; seam pour l'auth réelle en V2)
 // ============================================================
-const PROFILE_AVATARS = ["🙂","😎","💪","🧘","🌟","🚀","🦊","🐱","🌿","🔥"];
+// Avatar de profil — V1 : placeholder = Esprit niveau 1 (gris).
+// V2 (seam) : si `photoUrl` est renseignée (upload utilisateur / import Outlook/Google),
+// on affiche la photo de son choix ; sinon le placeholder. Aucune UI d'upload en V1.
+function ProfileAvatar({ size=40, rounded="rounded-full", photoUrl }){
+  return (
+    <div className={"bg-slate-100 grid place-items-center overflow-hidden "+rounded} style={{width:size,height:size}}>
+      {photoUrl ? <img src={photoUrl} alt="" className="w-full h-full object-cover"/> : (<svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+        <path d="M50 13 C72 13 87 29 87 50 C87 71 72 87 50 87 C28 87 13 71 13 50 C13 29 28 13 50 13 Z" fill="#D7DEE6" stroke="#AEB9C5" strokeWidth="2.5"/>
+        <ellipse cx="50" cy="58" rx="21" ry="14" fill="#ffffff" opacity="0.5"/>
+        <circle cx="50" cy="60" r="8.5" fill="#E7E0CF"/>
+        <circle cx="50" cy="60" r="2.8" fill="#ffffff"/>
+        <ellipse cx="40.5" cy="46" rx="3.7" ry="4.9" fill="#5B6B80"/>
+        <ellipse cx="59.5" cy="46" rx="3.7" ry="4.9" fill="#5B6B80"/>
+        <circle cx="41.5" cy="44.5" r="1.1" fill="#ffffff"/>
+        <circle cx="60.5" cy="44.5" r="1.1" fill="#ffffff"/>
+        <path d="M44 53 Q50 58 56 53" stroke="#5B6B80" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+      </svg>)}
+    </div>
+  );
+}
 
 function Welcome({ onStart }){
   const [name, setName] = useState("");
-  const [avatar, setAvatar] = useState("🙂");
   return (
     <div className="min-h-screen relative z-10 flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-soft text-center">
@@ -725,21 +756,18 @@ function Welcome({ onStart }){
           <label className="text-xs font-semibold text-gray-600">Ton prénom</label>
           <input value={name} onChange={e=>setName(e.target.value)} placeholder="Ex : Marie" className="w-full mt-1 border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-violet-400"/>
         </div>
-        <div className="text-left mt-4">
-          <label className="text-xs font-semibold text-gray-600">Ton avatar</label>
-          <div className="flex gap-2 flex-wrap mt-1">
-            {PROFILE_AVATARS.map(a=>(<button key={a} onClick={()=>setAvatar(a)} className={"w-10 h-10 rounded-xl text-xl grid place-items-center border transition "+(avatar===a?"border-violet-500 bg-violet-50":"border-gray-200 hover:bg-gray-50")}>{a}</button>))}
-          </div>
-        </div>
-        <button onClick={()=>onStart(name, avatar)} className="btn-press mt-5 w-full py-3 rounded-2xl text-white font-semibold shadow-soft" style={{background:"linear-gradient(135deg,#7C5CFF,#5B3DF5)"}}>Commencer</button>
-        <button onClick={()=>onStart("", avatar)} className="mt-2 w-full py-2 text-sm text-gray-500 hover:text-violet-600">Continuer en invité</button>
+        <button onClick={()=>onStart(name)} className="btn-press mt-5 w-full py-3 rounded-2xl text-white font-semibold shadow-soft" style={{background:"linear-gradient(135deg,#7C5CFF,#5B3DF5)"}}>Commencer</button>
+        <button onClick={()=>onStart("")} className="mt-2 w-full py-2 text-sm text-gray-500 hover:text-violet-600">Continuer en invité</button>
       </div>
     </div>
   );
 }
 
-function Profile({ profile, points, streak, pausesToday, goalPerDay, onPatch }){
+function Profile({ state, onPatch }){
+  const profile = state.profile;
+  const points = state.points, streak = state.streak;
   const level = Math.floor((points||0)/100)+1;
+  const currentStage = stageForLevel(level);
   return (
     <div>
       <div className="mb-3">
@@ -748,25 +776,31 @@ function Profile({ profile, points, streak, pausesToday, goalPerDay, onPatch }){
         <p className="text-xs text-gray-500 mt-0.5">Profil local — un compte en ligne arrivera en V2.</p>
       </div>
       <div className="bg-white rounded-3xl p-5 shadow-soft mb-4 flex items-center gap-4">
-        <div className="w-20 h-20 rounded-2xl bg-violet-100 grid place-items-center text-4xl shrink-0">{profile.avatar}</div>
+        <ProfileAvatar size={80} rounded="rounded-2xl" photoUrl={profile.avatarUrl}/>
         <div className="flex-1 min-w-0">
           <input value={profile.name} onChange={e=>onPatch({name:e.target.value, guest:false})} className="w-full text-lg font-bold border-b border-transparent hover:border-gray-200 focus:border-violet-400 focus:outline-none"/>
           <div className="text-[11px] text-gray-500 mt-1">{profile.guest?"Invité · profil local":"Profil local"} · Niveau {level}</div>
+          <div className="text-[10px] text-gray-400 mt-1">📷 Photo de profil bientôt (import ou Outlook)</div>
         </div>
       </div>
       <div className="bg-white rounded-2xl p-4 shadow-soft mb-4">
-        <div className="text-sm font-semibold mb-2">Choisir un avatar</div>
-        <div className="flex gap-2 flex-wrap">
-          {PROFILE_AVATARS.map(a=>(<button key={a} onClick={()=>onPatch({avatar:a})} className={"w-10 h-10 rounded-xl text-xl grid place-items-center border transition "+(profile.avatar===a?"border-violet-500 bg-violet-50":"border-gray-200 hover:bg-gray-50")}>{a}</button>))}
+        <div className="text-sm font-semibold">Évolution de l'esprit</div>
+        <div className="text-[11px] text-gray-500 mb-3">Ta mascotte grandit avec ton niveau — débloque les stades suivants.</div>
+        <div className="grid grid-cols-5 gap-1">
+          {MASCOT_STAGE_NAMES.map((name,i)=>{
+            const sn=i+1, reached=sn<=currentStage, isCurrent=sn===currentStage;
+            return (
+              <div key={sn} className={"flex flex-col items-center text-center rounded-2xl py-1 "+(isCurrent?"bg-violet-50 ring-1 ring-violet-200":"")}>
+                <div className={reached?"":"grayscale opacity-40"}><Mascot stage={sn} size={52} mood={reached?"happy":"neutral"}/></div>
+                <div className={"text-[9px] leading-tight mt-0.5 "+(reached?(isCurrent?"font-bold text-violet-700":"font-semibold text-violet-600"):"text-gray-400")}>{name}</div>
+                <div className="text-[9px] h-3 leading-none text-gray-300">{reached?(isCurrent?"● actuel":""):"🔒"}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <StatCard icon="✨" label="Points" value={points} accent="#7C5CFF"/>
-        <StatCard icon="🔥" label="Streak" value={streak+" j"} accent="#FB923C"/>
-        <StatCard icon="✅" label="Pauses (jour)" value={pausesToday+"/"+goalPerDay} accent="#34D399"/>
-        <StatCard icon="🏅" label="Niveau" value={level} accent="#7C5CFF"/>
-      </div>
-      <p className="text-[11px] text-gray-400 text-center">Statistiques détaillées à venir (écran Stats).</p>
+      {/* Progression (anciennement onglet Stats, fusionné ici) */}
+      <Stats pausesByDay={state.pausesByDay} points={points} streak={streak} maxStreak={state.maxStreak} goalPerDay={state.goalPerDay} exercisesDoneIds={state.exercisesDoneIds}/>
     </div>
   );
 }
@@ -797,9 +831,9 @@ function Stats({ pausesByDay, points, streak, maxStreak, goalPerDay, exercisesDo
   const dayLetters=["D","L","M","M","J","V","S"];
   return (
     <div>
-      <div className="mb-3">
+      <div className="mb-3 mt-1">
         <div className="text-xs uppercase tracking-wide text-violet-500 font-semibold">Progression</div>
-        <h1 className="text-xl font-bold leading-snug">Tes statistiques</h1>
+        <div className="text-lg font-bold leading-snug">Tes statistiques</div>
       </div>
 
       <div className="bg-white rounded-2xl p-4 shadow-soft mb-4">
@@ -1024,10 +1058,10 @@ function App(){
     setExPhase("reward");
   }
   function closeReward(){ setExPhase("none"); setCurrentExercise(null); setExerciseEndsAt(null); }
-  function navigate(id){ if(id==="home") setView("home"); else if(id==="library") setView("library"); else if(id==="stats") setView("stats"); else if(id==="team") setView("team"); else if(id==="settings") setView("settings"); else if(id==="profile") setView("profile"); }
+  function navigate(id){ if(id==="home") setView("home"); else if(id==="library") setView("library"); else if(id==="team") setView("team"); else if(id==="settings") setView("settings"); else if(id==="profile") setView("profile"); }
   function patchState(patch){ setState(s=>({...s, ...patch})); }
   function resetStats(){ setState(s=>({...s, points:0, streak:0, pausesByDay:{}, refusalsByDay:{}, exercisesShownByDay:{}, lastActiveDate:null})); }
-  function startProfile(name, avatar){ const n=(name&&name.trim())?name.trim():"Invité"; setView("home"); setState(s=>({...s, profile:{name:n, avatar:avatar||"🙂", guest:!(name&&name.trim())}})); }
+  function startProfile(name){ const n=(name&&name.trim())?name.trim():"Invité"; setView("home"); setState(s=>({...s, profile:{name:n, guest:!(name&&name.trim())}})); }
   function patchProfile(patch){ setState(s=>({...s, profile:{...s.profile, ...patch}})); }
   function logout(){ setView("home"); setState(s=>({...s, profile:null})); }
 
@@ -1045,12 +1079,12 @@ function App(){
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-violet-500 text-white grid place-items-center font-bold shadow-soft">M</div>
             <div>
-              <div className="text-base font-bold leading-none">MoveBreak</div>
+              <div className="text-base font-bold leading-none font-display">MoveBreak</div>
               <div className="text-[11px] text-gray-500">vendredi 29 mai</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={()=>navigate("profile")} title="Mon profil" aria-label="Mon profil" className="w-9 h-9 rounded-full bg-violet-100 grid place-items-center text-lg hover:bg-violet-200 transition">{state.profile.avatar}</button>
+            <button onClick={()=>navigate("profile")} title="Mon profil" aria-label="Mon profil" className="rounded-full hover:opacity-80 transition"><ProfileAvatar size={36} photoUrl={state.profile.avatarUrl}/></button>
             <button onClick={resetDemo} title="Réinitialiser (démo)" className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 hover:bg-gray-50">↻ démo</button>
           </div>
         </header>
@@ -1069,8 +1103,8 @@ function App(){
         </section>
 
         <section className="grid grid-cols-2 gap-3 mb-4">
-          <StatCard icon="🔥" label="Streak" value={state.streak+" j"} accent="#FB923C" sub="jours consécutifs"/>
-          <StatCard icon="✨" label="Points" value={state.points} accent="#7C5CFF" sub={justAwarded?"+10 bravo !":"total cumulés"}/>
+          <StatCard icon="streak" label="Streak" value={state.streak+" j"} accent="#FB923C" sub="jours consécutifs"/>
+          <StatCard icon="points" label="Points" value={state.points} accent="#7C5CFF" sub={justAwarded?"+10 bravo !":"total cumulés"}/>
         </section>
 
         <section className="bg-white rounded-3xl p-5 shadow-soft mb-4 flex items-center gap-4">
@@ -1097,7 +1131,7 @@ function App(){
         </section>
 
         <section className="rounded-3xl p-4 mb-2 border border-dashed border-violet-300 bg-violet-50/60 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white grid place-items-center text-lg">👥</div>
+          <div className="w-10 h-10 rounded-xl bg-white grid place-items-center"><Icon name="team" size={22}/></div>
           <div className="flex-1">
             <div className="text-sm font-semibold text-violet-700">Tableau d'équipe</div>
             <div className="text-xs text-violet-700/80">Rejoins ton équipe avec un code et compare-toi à tes collègues — bientôt 🚀</div>
@@ -1120,9 +1154,7 @@ function App(){
 
         {view==="settings" && (<Settings state={state} profile={state.profile} onPatch={patchState} onReset={resetStats} onLogout={logout} onOpenProfile={()=>navigate("profile")}/>)}
 
-        {view==="profile" && (<Profile profile={state.profile} points={state.points} streak={state.streak} pausesToday={pausesToday} goalPerDay={state.goalPerDay} onPatch={patchProfile}/>)}
-
-        {view==="stats" && (<Stats pausesByDay={state.pausesByDay} points={state.points} streak={state.streak} maxStreak={state.maxStreak} goalPerDay={state.goalPerDay} exercisesDoneIds={state.exercisesDoneIds}/>)}
+        {view==="profile" && (<Profile state={state} onPatch={patchProfile}/>)}
 
         {view==="team" && (<Team/>)}
       </main>

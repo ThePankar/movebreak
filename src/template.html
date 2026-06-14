@@ -9,10 +9,15 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--primary:#7C5CFF;--bg:#FAF7F2;--ink:#1F2937;}
 html,body{background:transparent;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);}
+body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);}
+h1,h2,h3,.font-display{font-family:'Baloo 2','Nunito',sans-serif;letter-spacing:-.01em;}
 /* Fond cream + vagues SVG en statique (z-index explicite, cf. DECISIONS.md) */
 .page-bg{position:fixed;inset:0;background:#FAF7F2;z-index:0;}
 .page-waves{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1;}

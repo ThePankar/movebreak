@@ -5,8 +5,7 @@ node_modules/
 .idea/
 
 # Outillage & docs internes — non publiés
-CLAUDE.md
-.claude/
+
 
 # Docs de travail internes — non publiées
 docs/

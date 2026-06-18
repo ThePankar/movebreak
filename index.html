@@ -9,6 +9,15 @@
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+/* Force le runtime JSX « classic » (React.createElement sur le global React UMD).
+   Sans ça, les versions récentes de Babel utilisent par défaut le runtime « automatic »
+   qui émet `import { jsx } from "react/jsx-runtime"` — invalide dans un <script> non-module,
+   ce qui fait planter tout le script et n'affiche que le fond. */
+Babel.registerPreset('react-classic', {
+  presets: [[Babel.availablePresets['react'], { runtime: 'classic' }]]
+});
+</script>
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +82,7 @@ h1,h2,h3,.font-display{font-family:'Baloo 2','Nunito',sans-serif;letter-spacing:
   <path d="M-100,720 C200,660 400,780 620,700 C820,620 980,720 1100,680" stroke="url(#pw3)" stroke-width="2.5" fill="none"/>
 </svg>
 <div id="app"></div>
-<script type="text/babel">
+<script type="text/babel" data-presets="react-classic">
 const { useState, useEffect } = React;
 
 const STORAGE_KEY = "movebreak_state_v1";

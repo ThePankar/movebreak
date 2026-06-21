@@ -391,7 +391,60 @@ function StickyFactCard(){
   );
 }
 
+function Lightbox({ src, alt, open, onClose }){
+  React.useEffect(()=>{
+    if(!open) return;
+    const onKey = e => { if(e.key==="Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return ()=>{ document.removeEventListener("keydown", onKey); document.body.style.overflow = prevOverflow; };
+  },[open, onClose]);
+  if(!open) return null;
+  return (
+    <div role="dialog" aria-modal="true" aria-label={alt||"Image agrandie"}
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{background:"rgba(0,0,0,.7)"}}>
+      <button onClick={onClose} aria-label="Fermer"
+        className="absolute top-3 right-3 w-11 h-11 grid place-items-center rounded-full bg-white/90 text-gray-800 text-2xl leading-none shadow-soft hover:bg-white">×</button>
+      <img src={src} alt={alt||""} onClick={e=>e.stopPropagation()}
+        style={{objectFit:"contain", maxWidth:"min(95vw,1100px)", maxHeight:"90vh"}}
+        className="rounded-xl shadow-soft"/>
+    </div>
+  );
+}
+
+function SanteCard({ img, alt, onOpen }){
+  const ref = React.useRef(null);
+  return (
+    <button ref={ref} onClick={()=>onOpen(ref.current)} title="Voir en grand"
+      className="block w-full bg-white rounded-xl border border-gray-100 overflow-hidden shadow-soft hover:border-violet-200 hover:shadow-md transition">
+      <img src={img} alt={alt} loading="lazy" decoding="async"
+        style={{objectFit:"contain"}} className="w-full"/>
+    </button>
+  );
+}
+
 function Sidebar({ onClose, onCollapse }){
+  const [zoom,setZoom]=useState(null);
+  const triggerRef = React.useRef(null);
+  const POSTURE = [
+    { img:"assets/sante/mauvaise_posture.png",
+      alt:"Mauvaise posture à éviter : dos voûté, tête trop penchée vers l'écran et épaules tendues" },
+    { img:"assets/sante/bonne_posture.png",
+      alt:"Bonne posture à adopter : dos droit, écran à hauteur des yeux et épaules détendues" },
+  ];
+  const REGLE = [
+    { img:"assets/sante/regle20-20-20_1.png",
+      alt:"Règle 20-20-20, étape 1 : toutes les 20 minutes" },
+    { img:"assets/sante/regle20-20-20_2.png",
+      alt:"Règle 20-20-20, étape 2 : regarder un objet situé à environ 6 mètres" },
+    { img:"assets/sante/regle20-20-20_3.png",
+      alt:"Règle 20-20-20, étape 3 : pendant 20 secondes" },
+  ];
+  const openZoom = (s, el) => { triggerRef.current = el; setZoom(s); };
+  const closeZoom = () => { setZoom(null); const el = triggerRef.current; if(el) el.focus(); triggerRef.current = null; };
   return (
     <div className="h-full flex flex-col bg-white">
       <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-start justify-between shrink-0">
@@ -405,43 +458,21 @@ function Sidebar({ onClose, onCollapse }){
       <div className="flex-1 overflow-y-auto scroll-pretty">
         <StickyFactCard/>
         <div className="px-5 py-4 space-y-5">
-          <section>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-emerald-100 grid place-items-center text-emerald-600 text-xs font-bold">✓</div>
-              <h3 className="font-bold text-sm">La bonne posture</h3>
+          <section className="space-y-2">
+            <h3 className="font-bold text-sm">Bien s'installer</h3>
+            <div className="space-y-3">
+              {POSTURE.map(s=>(
+                <SanteCard key={s.img} img={s.img} alt={s.alt} onOpen={el=>openZoom(s, el)}/>
+              ))}
             </div>
-            <div className="bg-white rounded-2xl p-3 border border-gray-100"><GoodPosture/></div>
-            <ul className="mt-3 space-y-1.5 text-xs text-gray-600">
-              <li className="flex gap-2"><span className="text-emerald-500">•</span>Haut de l'écran au niveau des yeux, à 50–70 cm</li>
-              <li className="flex gap-2"><span className="text-emerald-500">•</span>Dos plaqué contre le dossier, épaules relâchées</li>
-              <li className="flex gap-2"><span className="text-emerald-500">•</span>Coudes, hanches et genoux ≈ 90°</li>
-              <li className="flex gap-2"><span className="text-emerald-500">•</span>Pieds à plat (ou sur un repose-pieds)</li>
-            </ul>
           </section>
 
-          <section>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-rose-100 grid place-items-center text-rose-600 text-xs font-bold">✗</div>
-              <h3 className="font-bold text-sm">À éviter</h3>
-            </div>
-            <div className="bg-white rounded-2xl p-3 border border-gray-100"><BadPosture/></div>
-            <ul className="mt-3 space-y-1.5 text-xs text-gray-600">
-              <li className="flex gap-2"><span className="text-rose-500">•</span>Tête penchée en avant (cervicales surchargées)</li>
-              <li className="flex gap-2"><span className="text-rose-500">•</span>Jambes croisées (circulation entravée)</li>
-              <li className="flex gap-2"><span className="text-rose-500">•</span>Écran trop bas ou trop loin</li>
-            </ul>
-          </section>
-
-          <section>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-violet-100 grid place-items-center text-violet-600 text-xs">👁️</div>
-              <h3 className="font-bold text-sm">La règle 20-20-20</h3>
-            </div>
-            <div className="bg-white rounded-2xl p-3 border border-gray-100">
-              <EyeRule/>
-              <p className="text-xs text-gray-600 mt-2 leading-snug">
-                Toutes les <b>20 minutes</b>, regarde un objet à <b>~6 mètres</b> pendant <b>20 secondes</b>. Le cristallin se détend, la fatigue oculaire diminue.
-              </p>
+          <section className="space-y-2">
+            <h3 className="font-bold text-sm">La règle 20-20-20</h3>
+            <div className="space-y-3">
+              {REGLE.map(s=>(
+                <SanteCard key={s.img} img={s.img} alt={s.alt} onOpen={el=>openZoom(s, el)}/>
+              ))}
             </div>
           </section>
 
@@ -474,6 +505,7 @@ function Sidebar({ onClose, onCollapse }){
       <div className="px-5 py-3 border-t border-gray-100 text-[10px] text-gray-400 text-center shrink-0">
         Conseils inspirés de l'INRS, OMS et études scientifiques publiques.
       </div>
+      <Lightbox open={!!zoom} src={zoom?.img} alt={zoom?.alt} onClose={closeZoom}/>
     </div>
   );
 }

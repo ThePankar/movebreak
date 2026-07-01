@@ -109,6 +109,10 @@ const defaultState = () => ({
   profile:null,
   // Stats & progression (écran 6)
   maxStreak:0, exercisesDoneIds:[],
+  // Boucle d'engagement (LOCAL uniquement — voir unlockCosmetics()).
+  // unlockedCosmetics ex. ["color_yeux"] ; selectedColor "default"|"color_*" ;
+  // dailyQuestClaimed ex. {"2026-06-25":true}.
+  unlockedCosmetics:[], selectedColor:"default", dailyQuestClaimed:{},
 });
 function loadState(){
   try{
@@ -141,9 +145,19 @@ const STAGE_STYLE = {
 };
 function stageForLevel(level){ return level<3?1 : level<5?2 : level<8?3 : level<12?4 : 5; }
 
-function Mascot({ mood="neutral", size=140, stage=1, float=true }){
+// hex "#RRGGBB" -> "#RRGGBB" éclairci de `amt` (0..1) vers le blanc (pour le halo).
+function lighten(hex, amt){
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex||""); if(!m) return hex;
+  const n = parseInt(m[1],16);
+  const mix = c => Math.round(c + (255-c)*amt);
+  const r=mix((n>>16)&255), g=mix((n>>8)&255), b=mix(n&255);
+  return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+function Mascot({ mood="neutral", size=140, stage=1, float=true, tint=null }){
   const uid = (React.useId ? React.useId() : "m").replace(/[:]/g,"");
-  const S = STAGE_STYLE[stage] || STAGE_STYLE[1];
+  const base = STAGE_STYLE[stage] || STAGE_STYLE[1];
+  // tint (couleur de zone choisie) teinte franchement le corps + l'accent/halo/contour.
+  const S = tint ? {...base, from:lighten(tint,0.72), to:lighten(tint,0.30), stroke:tint, accent:tint, halo:lighten(tint,0.55), ring:tint} : base;
   const ref = (n)=>"url(#"+n+uid+")";
   const cheeks = mood==="happy"||mood==="hero";
   const eyeRy = mood==="sleepy"?2.5:(mood==="hero"?11:9.5);
@@ -331,6 +345,51 @@ function loadExercises(){
   return DEFAULT_EXERCISES;
 }
 const EXERCISES = loadExercises();
+
+// ============================================================
+// Boucle d'engagement (LOCAL uniquement) — cosmétiques de l'Esprit.
+// Déblocages définitifs, recalculés depuis exercisesDoneIds + points via
+// unlockCosmetics() (idempotent). En V1, tout reste en localStorage.
+// ============================================================
+// 6 zones → 1 couleur d'Esprit nommée + 1 forme distincte (jamais la couleur seule).
+const ZONE_META = {
+  "Nuque":    {colorId:"color_nuque",    colorName:"Indigo", hex:"#6366F1", shape:"diamond"},
+  "Épaules":  {colorId:"color_epaules",  colorName:"Corail", hex:"#FB7185", shape:"triangle"},
+  "Poignets": {colorId:"color_poignets", colorName:"Ambre",  hex:"#F59E0B", shape:"square"},
+  "Yeux":     {colorId:"color_yeux",     colorName:"Azur",   hex:"#38BDF8", shape:"circle"},
+  "Jambes":   {colorId:"color_jambes",   colorName:"Menthe", hex:"#34D399", shape:"hexagon"},
+  "Dos":      {colorId:"color_dos",      colorName:"Prune",  hex:"#A855F7", shape:"pentagon"},
+};
+const ZONE_ORDER = ["Nuque","Épaules","Poignets","Yeux","Jambes","Dos"];
+// Couleurs sélectionnables : "Esprit" par défaut (suit le stade) + 1 par zone.
+const COLOR_DEFS = [
+  {id:"default", name:"Esprit", hex:null, unlock:null}, // hex null → couleur du stade
+  ...ZONE_ORDER.map(z=>({ id:ZONE_META[z].colorId, name:ZONE_META[z].colorName, hex:ZONE_META[z].hex, unlock:"Complète la zone "+z })),
+];
+const DAILY_QUEST_TARGET = 3; // 3 pauses → quête accomplie (indépendant de l'objectif de pauses/j)
+
+const colorById = id => COLOR_DEFS.find(c=>c.id===id) || COLOR_DEFS[0];
+// Couleur effective pour la mascotte : null si "default" (la mascotte garde la teinte du stade).
+const colorFor = id => colorById(id).hex;
+
+// Zone "complétée" = tous ses exercices figurent dans exercisesDoneIds.
+function zoneProgress(zone, doneIds){
+  const all = EXERCISES.filter(e=>e.zone===zone);
+  const done = all.filter(e=>(doneIds||[]).includes(e.id));
+  return { done: done.length, total: all.length, complete: all.length>0 && done.length===all.length };
+}
+
+// Recalcule l'ensemble des déblocages (zone) à partir des données existantes —
+// idempotent. Appelé à chaque patch pertinent (points/exercices) pour rester stable.
+function unlockCosmetics(state){
+  const owned = new Set(state.unlockedCosmetics||[]);
+  for(const z of ZONE_ORDER){ if(zoneProgress(z, state.exercisesDoneIds).complete) owned.add(ZONE_META[z].colorId); }
+  const next = Array.from(owned);
+  // Évite un nouvel objet si rien n'a changé (stabilité du state).
+  const prev = state.unlockedCosmetics||[];
+  if(next.length===prev.length && next.every(id=>prev.includes(id))) return state;
+  return {...state, unlockedCosmetics: next};
+}
 
 // ============================================================
 // Équipe (écran 7) — teaser V1. Pré-câblage V2 : schéma BDD-ready + hook.
@@ -854,7 +913,58 @@ function Welcome({ onStart }){
   );
 }
 
-function Profile({ state, onPatch }){
+// Forme distincte par zone (jamais la couleur seule → accessibilité).
+function ZoneShape({ shape, color, size=22 }){
+  const c=size/2, common={fill:color, stroke:"#fff", strokeWidth:1.5};
+  const polys = {
+    triangle: c+","+(size*0.12)+" "+(size*0.9)+","+(size*0.85)+" "+(size*0.1)+","+(size*0.85),
+    diamond:  c+","+(size*0.08)+" "+(size*0.92)+","+c+" "+c+","+(size*0.92)+" "+(size*0.08)+","+c,
+    pentagon: c+","+(size*0.08)+" "+(size*0.95)+","+(size*0.42)+" "+(size*0.78)+","+(size*0.95)+" "+(size*0.22)+","+(size*0.95)+" "+(size*0.05)+","+(size*0.42),
+    hexagon:  (size*0.25)+","+(size*0.1)+" "+(size*0.75)+","+(size*0.1)+" "+(size*0.95)+","+c+" "+(size*0.75)+","+(size*0.9)+" "+(size*0.25)+","+(size*0.9)+" "+(size*0.05)+","+c,
+  };
+  return (
+    <svg width={size} height={size} viewBox={"0 0 "+size+" "+size} aria-hidden="true">
+      {shape==="circle"   && <circle cx={c} cy={c} r={c*0.82} {...common}/>}
+      {shape==="square"   && <rect x={size*0.12} y={size*0.12} width={size*0.76} height={size*0.76} rx={size*0.14} {...common}/>}
+      {polys[shape] && <polygon points={polys[shape]} {...common}/>}
+    </svg>
+  );
+}
+
+// Collection par zone. Chaque zone complétée débloque sa couleur d'Esprit,
+// applicable direct en tapant la carte (re-tap = retour couleur par défaut).
+// Zone non complétée : tap → bibliothèque pour faire ses exercices.
+function ZoneCollection({ doneIds, selectedColor, onApplyColor, onOpenZone }){
+  return (
+    <div className="bg-white rounded-2xl p-4 shadow-soft mb-4">
+      <div className="text-sm font-semibold">Collection par zone</div>
+      <div className="text-[11px] text-gray-500 mb-3">Complète une zone pour débloquer sa couleur d'Esprit — puis applique-la d'un tap.</div>
+      <div className="grid grid-cols-2 gap-2.5">
+        {ZONE_ORDER.map(z=>{
+          const m=ZONE_META[z], p=zoneProgress(z, doneIds);
+          const active = selectedColor===m.colorId;
+          return (
+            <button key={z} onClick={p.complete ? ()=>onApplyColor(m.colorId) : ()=>onOpenZone(z)}
+              title={p.complete?("Appliquer la couleur "+m.colorName):"Voir les exercices de la zone"}
+              className={"btn-press text-left rounded-2xl p-3 border min-h-[44px] transition "+(active?"bg-violet-50 border-violet-300 ring-1 ring-violet-200":p.complete?"bg-emerald-50 border-emerald-200":"bg-white border-gray-100 hover:border-violet-200")}>
+              <div className="flex items-center gap-2">
+                <ZoneShape shape={m.shape} color={m.hex} size={22}/>
+                <span className="text-sm font-semibold leading-tight flex-1 min-w-0 truncate">{z}</span>
+                {p.complete && <span className="text-emerald-500 text-sm" title="Zone complétée">✓</span>}
+              </div>
+              <div className="text-[11px] text-gray-500 mt-1.5 tabular-nums">{p.done}/{p.total} exercices</div>
+              <div className="text-[10px] mt-0.5 leading-tight font-medium" style={{color:m.hex}}>
+                {!p.complete ? ("Couleur "+m.colorName+" à débloquer") : active ? ("● Couleur "+m.colorName+" active") : ("Appliquer la couleur "+m.colorName)}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Profile({ state, onPatch, onOpenZone, onApplyColor }){
   const profile = state.profile;
   const points = state.points, streak = state.streak;
   const level = calcLevel(points);
@@ -890,6 +1000,7 @@ function Profile({ state, onPatch }){
           })}
         </div>
       </div>
+      <ZoneCollection doneIds={state.exercisesDoneIds} selectedColor={state.selectedColor} onApplyColor={onApplyColor} onOpenZone={onOpenZone}/>
       {/* Progression (anciennement onglet Stats, fusionné ici) */}
       <Stats pausesByDay={state.pausesByDay} points={points} streak={streak} maxStreak={state.maxStreak} goalPerDay={state.goalPerDay} exercisesDoneIds={state.exercisesDoneIds}/>
     </div>
@@ -1022,6 +1133,47 @@ function Team(){
   );
 }
 
+// ============================================================
+// Carte « Quête du jour » (Accueil). Progression vers DAILY_QUEST_TARGET pauses.
+// À l'objectif : « Quête accomplie » + bouton claim (1 claim/jour, +15 pts).
+// Au-delà : message doux, jamais « terminé/limite ». Ton bienveillant.
+// ============================================================
+function DailyQuestCard({ pausesToday, claimed, onClaim }){
+  const target = DAILY_QUEST_TARGET;
+  const reached = pausesToday >= target;
+  const shown = Math.min(pausesToday, target);
+  return (
+    <section className="bg-white rounded-3xl p-5 shadow-soft mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-xs uppercase tracking-wide text-violet-500 font-semibold">🎯 Quête du jour</div>
+        <div className="text-xs text-gray-500 tabular-nums">{shown}/{target}</div>
+      </div>
+      {!reached && (
+        <p className="text-sm text-gray-600 leading-snug">Fais <b>{target} pauses</b> aujourd'hui pour gagner la récompense du jour.</p>
+      )}
+      {/* Jalons : ● faits / ○ à venir. Forme + nombre, jamais la couleur seule. */}
+      <div className="flex items-center gap-2 mt-3" aria-label={shown+" pauses sur "+target}>
+        {Array.from({length:target}).map((_,i)=>(
+          <span key={i} className={"w-3.5 h-3.5 rounded-full "+(i<pausesToday?"bg-violet-500":"bg-gray-200")}/>
+        ))}
+        <span className="text-xs text-gray-400 ml-1 tabular-nums">{shown}/{target}</span>
+      </div>
+      {reached && !claimed && (
+        <div className="mt-4">
+          <div className="text-sm font-bold text-emerald-600 mb-2">✓ Quête accomplie !</div>
+          <button onClick={onClaim} className="btn-press w-full py-3 rounded-2xl text-white font-semibold shadow-soft" style={{background:"linear-gradient(135deg,#34D399,#10B981)"}}>🎁 Récupérer ma récompense</button>
+        </div>
+      )}
+      {reached && claimed && (
+        <div className="mt-4 flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 rounded-2xl px-4 py-3">
+          <span className="text-lg">✓</span>
+          <span className="font-medium leading-snug">Récompense récupérée ! Bravo, l'Esprit pétille ✨</span>
+        </div>
+      )}
+    </section>
+  );
+}
+
 function App(){
   const [state, setState] = useState(loadState);
   const [now, setNow] = useState(Date.now());
@@ -1044,6 +1196,8 @@ function App(){
   },[]);
   useEffect(()=>{ const id=setInterval(()=>setNow(Date.now()),1000); return ()=>clearInterval(id); },[]);
   useEffect(()=>{ saveState(state); },[state]);
+  // Recalcule les déblocages de couleurs (zones complétées) à chaque changement pertinent.
+  useEffect(()=>{ setState(s=>unlockCosmetics(s)); },[state.points, state.exercisesDoneIds]);
   // Fin de l'exercice → récompense + attribution des points (selon le mode)
   useEffect(()=>{
     if(exPhase==="exercise" && exerciseEndsAt && now>=exerciseEndsAt){
@@ -1149,6 +1303,17 @@ function App(){
     setExPhase("reward");
   }
   function closeReward(){ setExPhase("none"); setCurrentExercise(null); setExerciseEndsAt(null); }
+  // Claim de la Quête du jour : 1 claim/jour, récompense = +15 points, plafond gardé.
+  function claimDailyQuest(){
+    setState(s=>{
+      if((s.pausesByDay[t]||0) < DAILY_QUEST_TARGET || s.dailyQuestClaimed[t]) return s; // garde-fou plafond
+      return {...s, dailyQuestClaimed:{...s.dailyQuestClaimed, [t]:true}, points:(s.points||0)+15};
+    });
+    setJustAwarded(true); setTimeout(()=>setJustAwarded(false),900);
+    showNotice("🎉 Quête du jour accomplie ! +15 points");
+  }
+  // Applique une couleur débloquée à l'Esprit (re-tap = retour à la couleur par défaut du stade).
+  function applyColor(id){ setState(s=>({...s, selectedColor: s.selectedColor===id ? "default" : id})); }
   function navigate(id){ if(id==="home") setView("home"); else if(id==="library") setView("library"); else if(id==="team") setView("team"); else if(id==="settings") setView("settings"); else if(id==="profile") setView("profile"); }
   function patchState(patch){ setState(s=>({...s, ...patch})); }
   function resetStats(){ setState(s=>({...s, points:0, streak:0, pausesByDay:{}, refusalsByDay:{}, exercisesShownByDay:{}, lastActiveDate:null})); }
@@ -1180,8 +1345,9 @@ function App(){
         </header>
 
         {view==="home" && (<>
+        <DailyQuestCard pausesToday={pausesToday} claimed={!!state.dailyQuestClaimed[t]} onClaim={claimDailyQuest}/>
         <section className="bg-white rounded-3xl p-5 shadow-soft flex items-center gap-4 mb-4">
-          <Mascot mood={mood} size={120} stage={mascotStage}/>
+          <Mascot mood={mood} size={120} stage={mascotStage} tint={colorFor(state.selectedColor)}/>
           <div className="flex-1">
             <div className="text-xs uppercase tracking-wide text-violet-500 font-semibold">Bonjour {state.profile.name} 👋</div>
             <h1 className="text-xl font-bold leading-snug mt-0.5">{greet}</h1>
@@ -1244,7 +1410,7 @@ function App(){
 
         {view==="settings" && (<Settings state={state} profile={state.profile} onPatch={patchState} onReset={resetStats} onLogout={logout} onOpenProfile={()=>navigate("profile")}/>)}
 
-        {view==="profile" && (<Profile state={state} onPatch={patchProfile}/>)}
+        {view==="profile" && (<Profile state={state} onPatch={patchProfile} onOpenZone={()=>navigate("library")} onApplyColor={applyColor}/>)}
 
         {view==="team" && (<Team/>)}
       </main>
